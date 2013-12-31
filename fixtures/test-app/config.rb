@@ -1,0 +1,1 @@
+activate :meta_tags 
