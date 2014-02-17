@@ -12,17 +12,17 @@ module Middleman
         title = build_full_title(meta_tags) # should delete title?
         tag_results_array << content_tag(:title, title) unless title.blank?
 
-        tag_results_array << meta_tag(name: 'description', content: meta_tags[:description])
+        tag_results_array << meta_tag(name: 'description',         content: meta_tags[:description])
 
-        tag_results_array << meta_link(rel: 'author',             href: meta_tags[:rel_author])
-        tag_results_array << meta_link(rel: 'publisher',          href: meta_tags[:rel_publisher])
-        
-        tag_results_array << meta_tag(property: 'og:title',       content: meta_tags[:title])     
-        tag_results_array << meta_tag(property: 'og:type',        content: meta_tags[:og_type])   
-        tag_results_array << meta_tag(property: 'og:image',       content: meta_tags[:og_image])  
-        tag_results_array << meta_tag(property: 'og:url',         content: meta_tags[:og_url])    
-        tag_results_array << meta_tag(property: 'og:description', content: meta_tags[:description])
-        tag_results_array << meta_tag(property: 'fb:admins',      content: meta_tags[:fb_admins]) 
+        tag_results_array << meta_link(rel: 'author',              href: meta_tags[:rel_author])
+        tag_results_array << meta_link(rel: 'publisher',           href: meta_tags[:rel_publisher])
+         
+        tag_results_array << meta_tag(property: 'og:title',        content: meta_tags[:title])     
+        tag_results_array << meta_tag(property: 'og:type',         content: meta_tags[:og_type])   
+        tag_results_array << meta_tag(property: 'og:image',        content: meta_tags[:og_image])  
+        tag_results_array << meta_tag(property: 'og:url',          content: meta_tags[:og_url])    
+        tag_results_array << meta_tag(property: 'og:description',  content: meta_tags[:description])
+        tag_results_array << meta_tag(property: 'fb:admins',       content: meta_tags[:fb_admins]) 
   
         tag_results_array << meta_tag(name: 'twitter:card',        content: meta_tags[:description])
         tag_results_array << meta_tag(name: 'twitter:url',         content: meta_tags[:og_url])
@@ -56,6 +56,7 @@ module Middleman
         headline.blank? ? meta_tags[:title] : headline
       end
 
+      # defines methods for all configured tags
       META_TAGS_TO_PREPARE.each do |name|
         define_method name do |text|
           set_meta_tags(name => text)
@@ -80,10 +81,6 @@ module Middleman
             return tag(:meta, :property => property, :content => content)
           end
         end
-      end
-
-      def link_rel
-        
       end
 
       def build_full_title(meta_tags)
