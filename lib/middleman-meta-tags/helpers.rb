@@ -3,7 +3,7 @@ module Middleman
   module MetaTags
     module Helpers
 
-      META_TAGS_TO_PREPARE = [:description, :rel_author, :rel_publisher, :og_type, :og_image, :og_url, :fb_admins]
+      META_TAGS_TO_PREPARE = [:description, :rel_author, :rel_publisher, :og_type, :og_image, :og_url, :fb_admins, :twitter_image]
 
       def display_meta_tags(user_set_defaults={})
         meta_tags = user_set_defaults.merge(self.meta_tags)
@@ -28,11 +28,7 @@ module Middleman
         tag_results_array << meta_tag(name: 'twitter:url',         content: meta_tags[:og_url])
         tag_results_array << meta_tag(name: 'twitter:title',       content: meta_tags[:title])
         tag_results_array << meta_tag(name: 'twitter:description', content: meta_tags[:description])
-        
-        if defined? :thumbnail_url && meta_tags[:og_image]
-          url = thumbnail_url(blog_prefix + meta_tags[:og_image], :twitter_card)
-          tag_results_array << tag(:meta, :name => 'twitter:image', :content => url)
-        end
+        tag_results_array << meta_tag(name: 'twitter:image',       content: meta_tags[:twitter_image])
 
         # TODO: Schema.Org stuff
 
