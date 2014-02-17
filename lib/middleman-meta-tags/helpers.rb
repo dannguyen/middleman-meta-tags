@@ -3,22 +3,37 @@ module Middleman
   module MetaTags
     module Helpers
 
+      META_TAGS_TO_PREPARE = [:description, :rel_author, :rel_publisher, :og_type, :og_image, :og_url, :fb_admins, :twitter_image]
+
       def display_meta_tags(user_set_defaults={})
         meta_tags = user_set_defaults.merge(self.meta_tags)
         tag_results_array = []
 
-        # title
         title = build_full_title(meta_tags) # should delete title?
         tag_results_array << content_tag(:title, title) unless title.blank?
 
-        # description
-        if meta_desc = meta_tags.delete(:description)
-          tag_results_array << tag(:meta, :name => :description, :content => meta_desc)
-        end
+        tag_results_array << meta_tag(name: 'description',         content: meta_tags[:description])
+
+        tag_results_array << meta_link(rel: 'author',              href: meta_tags[:rel_author])
+        tag_results_array << meta_link(rel: 'publisher',           href: meta_tags[:rel_publisher])
+         
+        tag_results_array << meta_tag(property: 'og:title',        content: meta_tags[:title])     
+        tag_results_array << meta_tag(property: 'og:type',         content: meta_tags[:og_type])   
+        tag_results_array << meta_tag(property: 'og:image',        content: meta_tags[:og_image])  
+        tag_results_array << meta_tag(property: 'og:url',          content: meta_tags[:og_url])    
+        tag_results_array << meta_tag(property: 'og:description',  content: meta_tags[:description])
+        tag_results_array << meta_tag(property: 'fb:admins',       content: meta_tags[:fb_admins]) 
+  
+        tag_results_array << meta_tag(name: 'twitter:card',        content: meta_tags[:description])
+        tag_results_array << meta_tag(name: 'twitter:url',         content: meta_tags[:og_url])
+        tag_results_array << meta_tag(name: 'twitter:title',       content: meta_tags[:title])
+        tag_results_array << meta_tag(name: 'twitter:description', content: meta_tags[:description])
+        tag_results_array << meta_tag(name: 'twitter:image',       content: meta_tags[:twitter_image])
+
+        # TODO: Schema.Org stuff
 
         results = tag_results_array.join("\n")
       end
-
 
       def meta_tags
         @meta_tags ||= Hash.new
@@ -28,35 +43,45 @@ module Middleman
         self.meta_tags.merge!(new_meta_tags)
       end
 
-
-
       def meta_title
         content_tag 'title', site_title
       end
-
-
-
-      #### public methods
  
       def title(title = nil, headline = '')
         set_meta_tags(:title => title) unless title.nil?
         headline.blank? ? meta_tags[:title] : headline
       end
 
-
-      def description(desc_str)
-        set_meta_tags(:description => desc_str)
-
-        desc_str
+      # defines methods for all configured tags
+      META_TAGS_TO_PREPARE.each do |name|
+        define_method name do |text|
+          set_meta_tags(name => text)
+          text
+        end
       end
 
-      #####
       private
+
+      def meta_link(rel: nil, href: nil)
+        if href
+          tag(:link, rel: rel, href: href) if href
+        end
+      end
+
+      def meta_tag(name: nil, property: nil, content: nil)
+        if content
+          if name
+            return tag(:meta, :name => name, :content => content)
+          end
+          if property
+            return tag(:meta, :property => property, :content => content)
+          end
+        end
+      end
 
       def build_full_title(meta_tags)
         meta_tags[:title] || meta_tags[:site]
       end
-
 
     end
   end
